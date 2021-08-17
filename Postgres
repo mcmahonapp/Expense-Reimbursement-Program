@@ -1,0 +1,161 @@
+drop table users ; 
+create table users(
+	username varchar (15) primary key, 
+	password varchar (15),
+	firstname varchar (15), 
+	lastname varchar (15),
+	role varchar (15)
+);
+
+drop table accounts ;
+create table accounts(
+    accountNumber varchar (10) primary key,
+	balance numeric (12, 2), 
+	accountType varchar (10),
+	routingNumber varchar (10),
+	status varchar (10)
+);
+
+drop table user_accounts ;
+create table user_accounts(
+	id numeric (10) primary key,
+	username varchar (15),
+	accountnumber varchar (15)
+);
+
+insert into users values ('Jeff','password','Jeff','Bezos','employee');
+insert into users values ('Sys','password','Sys','Sys','system');
+insert into users values ('Elon','password','Elon','Musk','customer');
+
+insert into accounts values ('0000000001',100,'Checking','021000021','PENDING');
+insert into accounts values ('0000000002',50,'Checking','021000021','APPROVED');
+insert into accounts values ('0000000003',10,'Checking','021000021','DENIED');
+
+insert into user_accounts values (1,'Jeff','0000000001');
+insert into user_accounts values (2,'Jeff','0000000002');
+insert into user_accounts values (3,'Elon','0000000003');
+
+commit;
+
+select * from users u ;
+select * from user_accounts ua ;
+select * from accounts a ;
+
+drop table if exists employee ; 
+create table EMPLOYEE(
+	emp_id int primary key, 
+	emp_first_name char(50) not null,
+	emp_last_name char(50) not null, 
+	emp_email char(50) not null, 
+	emp_password char(50) not null, 
+	emp_role int not null
+);
+
+drop table if exists "type"; 
+create table type(
+    type_id INT primary key, 
+    type_desc varchar (50)
+);
+
+drop table if exists status; 
+create table status(
+    status_id INT primary key, 
+    status_desc varchar (50)
+);
+
+drop table if exists role; 
+create table role( 
+    role_id INT primary key, 
+    role_desc varchar(50)
+);
+
+drop table if exists reimbursement; 
+create table Reimbursement( 
+	re_id int primary key, 
+	re_status int not null,
+    re_type int not null, 
+    re_amount DECIMAL(15,2) not null,
+    re_description VARCHAR(50) not null, 
+    re_timestamp DATE not null, 
+    re_applicant int not null,
+    re_manager int not null, 
+    constraint fk_re_status foreign key(re_status) references status(status_id),
+	constraint fk_re_type foreign key (re_type) references type(type_id),
+	constraint fk_re_applicant foreign key(re_applicant) references employee(emp_id),
+	constraint fk_re_manager foreign key (re_maneger)
+);
+
+drop table if exists emp_roles;
+create table emp_roles(
+    emp_roles_id int primary key, 
+    emp_id int, 
+    role_id int 
+    constraint fk_emp_roles_emp_id foreign key(emp_id) references employee(emp_id),
+	constraint fk__emp_roles_role_id foreign key (role_id) references role(role_id)
+); 
+
+
+
+
+
+START TRANSACTION;
+
+SELECT * FROM status;
+insert into status(status_id, status_desc)
+values(1,'pending'); 
+insert into status(status_id, status_desc)
+values(2,'approved'); 
+insert into status(status_id, status_desc)
+values(3,'denied');
+
+select * from type;
+insert into type(type_id, type_desc)
+values(1,'Lodging'); 
+insert into type(type_id, type_desc)
+values(2,'Travel'); 
+insert into type(type_id, type_desc)
+values(3,'Food');
+insert into type(type_id, type_desc)
+values(4,'Other');
+
+insert into role (role_id, role_desc)
+values (1, 'Manager');
+insert into role (role_id, role_desc)
+values (2, 'Employee');
+
+insert into employee (emp_id, emp_first_name, emp_last_name, emp_email, emp_password, emp_role)
+values(1, 'Alexa', 'Smith', 'asmith@gmail.com', 'ILikeApples123', 1);
+insert into employee (emp_id, emp_first_name, emp_last_name, emp_email, emp_password, emp_role)
+values(2, 'Janet', 'Jones', 'jjones@gmail.com', 'abc123#', 2);
+insert into employee (emp_id, emp_first_name, emp_last_name, emp_email, emp_password, emp_role)
+values(3, 'Jeff', 'Bezos', 'jbezos@mars.com', 'AmazonIsAwesome', 1);
+insert into employee (emp_id, emp_first_name, emp_last_name, emp_email, emp_password, emp_role)
+values(4, 'Elon', 'Musk', 'emusk@tesla.com', 'NoMoreGasoline', 2);
+
+insert into reimbursement (re_id, re_status, re_type, re_amount, re_description, re_timestamp, re_applicant, re_manager)
+values(1, 1, 1, 150.0, 'Stayed in Akron, OH', CURRENT_TIMESTAMP, 4, 3);
+
+insert into reimbursement (re_id, re_status, re_type, re_amount, re_description, re_timestamp, re_applicant, re_manager)
+values(2, 2, 3, 15.0, 'Lunch', CURRENT_TIMESTAMP, 2, 1);
+
+insert into reimbursement (re_id, re_status, re_type, re_amount, re_description, re_timestamp, re_applicant, re_manager)
+values(3, 3, 2, 650.0, 'Flight to Akron', CURRENT_TIMESTAMP, 4, 3);
+
+commit;
+
+
+
+
+
+commit; 
+
+-- rollback; 
+
+SELECT status_id, status_desc, type_id, type_desc, role_id, role_desc, emp_id, emp_first_name, emp_last_name, re_description, re_amount, re_timestamp
+FROM reimbursement r
+JOIN status s ON s.status_id = r.re_status
+JOIN type t ON t.type_id = r.re_type
+JOIN employee e ON e.emp_id = r.re_applicant
+JOIN role l ON l.role_id = e.emp_role;
+
+
