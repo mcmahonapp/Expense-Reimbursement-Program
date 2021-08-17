@@ -1,0 +1,45 @@
+package com.revature.dao;
+
+import java.util.List;
+
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
+import com.revature.model.Status;
+import com.revature.model.Type;
+import com.revature.util.HibernateUtil;
+
+public class ReimbursementDAO {
+	public List<Status> getAllStatus(){
+		Transaction transaction=null; 
+		List<Status> statuses=null;
+		try(Session session=HibernateUtil.getSessionFactory().openSession()){
+			transaction=session.beginTransaction();
+			statuses=session.createQuery("from Status").getResultList();
+			transaction.commit();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			if(transaction!=null) {
+				transaction.rollback(); 
+			}
+		}                         
+		return statuses;
+	}
+	public List<Type> getAllType(){
+		Transaction transaction=null; 
+		List<Type> types=null;
+		try(Session session=HibernateUtil.getSessionFactory().openSession()){
+			transaction=session.beginTransaction();
+			types=session.createQuery("from Type").getResultList();
+			transaction.commit();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			if(transaction!=null) {
+				transaction.rollback(); 
+			}
+		}                         
+		return types;
+	}
+}
