@@ -1,0 +1,49 @@
+import { Component, OnInit, Type } from '@angular/core';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.css']
+})
+export class DashboardComponent implements OnInit {
+username: string|null=""; 
+  
+constructor(private router: Router) {
+  if(localStorage.getItem('username')!=null)
+  { 
+   this.username= localStorage.getItem('username'); 
+  }else{
+    this.router.navigate(['/login'], {replaceUrl: true}); 
+  }
+}  
+  ngOnInit(): void {
+  }
+
+}
+
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { DashboardComponent } from './dashboard.component';
+
+describe('DashboardComponent', () => {
+  let component: DashboardComponent;
+  let fixture: ComponentFixture<DashboardComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ DashboardComponent ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(DashboardComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
